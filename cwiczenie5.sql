@@ -242,5 +242,32 @@ USING gist (ST_ConvexHull(rast));
 
 SELECT AddRasterConstraints('bujak'::name, 'porto_ndvi2'::name,'rast'::name);
 
+-- Eksport AsTiff
+
+SELECT ST_AsTiff(ST_Union(rast))
+FROM bujak.porto_ndvi;
+
+-- Eksport asGDALRASTER
+
+SELECT ST_AsGDALRaster(ST_Union(rast), 'GTiff', ARRAY['COMPRESS=DEFLATE', 'PREDICTOR=2', 'PZLEVEL=9'])
+FROM bujak.porto_ndvi;
+
+SELECT ST_GDALDrivers();
+
+-- Eksport large object
+
+CREATE TABLE tmp_out AS
+SELECT lo_from_bytea(0,
+ST_AsGDALRaster(ST_Union(rast), 'GTiff', ARRAY['COMPRESS=DEFLATE', 'PREDICTOR=2', 'PZLEVEL=9'])
+) AS loid
+FROM bujak.porto_ndvi;
+
+SELECT lo_export(loid, 'E:\myraster.tiff') --> Save the file in a place where the user postgres have access. In windows a flash drive usualy works fine.
+FROM tmp_out;
+
+SELECT lo_unlink(loid)
+FROM tmp_out; --> Delete the large object.
+
+
 
 
