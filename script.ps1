@@ -214,4 +214,8 @@ $Last_write = (Get-Item $OUT_CSV).LastWriteTime
 
 $Body_arch = "Data ostatniej modyfikacji: $Last_write`nILość wierszy: $csv_final"
 
-Send-MailMessage -To “jon-snow@winterfell.com” -From “mother-of-dragons@houseoftargaryen.net”  -Subject “CUSTOMERS PROCCESSED-$TIMESTAMP” -Body $Body_arch -Attachments $OUT_ZIP -Credential $credObject -SmtpServer “smtp.mailtrap.io” -Port 587
+Send-MailMessage -To “jon-snow@winterfell.com” -From “mother-of-dragons@houseoftargaryen.net”  -Subject “CUSTOMERS PROCCESSED-$TIMESTAMP” -Body $Body_arch -Attachments $OUT_ZIP -Credential $credObject -SmtpServer “smtp.mailtrap.io” -Port 587if($?)
+{
+   Add-Content "${PROCC}script_${NO_INDEX}.log" -Value "$TIMESTAMP_LOG Email sent succesfully"
+
+}
